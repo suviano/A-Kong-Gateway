@@ -45,10 +45,11 @@ func requestMaker(param KongAPI) interface{} {
 		HTTPSOnly              bool   `json:"https_only,omitempty"`
 		HTTPIfTerminated       bool   `json:"http_if_terminated,omitempty"`
 	}{
-		Name:    param.Name,
-		Hosts:   hosts,
-		Uris:    uris,
-		Methods: methods,
+		Name:        param.Name,
+		Hosts:       hosts,
+		Uris:        uris,
+		Methods:     methods,
+		UpstreamURL: param.UpstreamURL,
 	})
 
 	r, err := http.Post(fmt.Sprintf("%s/apis", ""), "application/json", bytes.NewBuffer(b))
@@ -63,6 +64,7 @@ func requestMaker(param KongAPI) interface{} {
 	return body
 }
 
+// KongAPI Configuration structure
 type KongAPI struct {
 	Name                   string
 	Hosts                  []string
@@ -87,31 +89,19 @@ type Kong interface {
 	MethodsAPI() (string, error)
 }
 
+// HostsAPI kong host api getter
 func (kong *KongAPI) HostsAPI() (string, error) {
 	return kongRoutingOptionString(kong.Hosts, kong.Uris, kong.Methods)
 }
 
-func (kong *KongAPI) SetHostsAPI(hosts ...string) (err error) {
-	_, kong.Hosts, err = emptyValuesInSlice(hosts...)
-	return
-}
-
+// UrisAPI kong uris api getter
 func (kong *KongAPI) UrisAPI() (string, error) {
 	return kongRoutingOptionString(kong.Uris, kong.Methods, kong.Hosts)
 }
 
-func (kong *KongAPI) SetUrisAPI(uris ...string) (err error) {
-	_, kong.Uris, err = emptyValuesInSlice(uris...)
-	return
-}
-
+// MethodsAPI kong methods api getter
 func (kong *KongAPI) MethodsAPI() (string, error) {
 	return kongRoutingOptionString(kong.Uris, kong.Methods, kong.Hosts)
-}
-
-func (kong *KongAPI) SetMethodsAPI(methods ...string) (err error) {
-	_, kong.Methods, err = emptyValuesInSlice(methods...)
-	return
 }
 
 func kongRoutingOptionString(target, alt1, alt2 []string) (string, error) {
@@ -134,11 +124,4 @@ func kongRoutingOptionString(target, alt1, alt2 []string) (string, error) {
 	}
 
 	return strings.Join(target, ","), msg
-}
-
-func main() {
-	// http://www.michaelbach.de/ot/sze_silhouette/index.html
-	// http://www.exploratorium.edu/files/exhibits/fading_dot/fading_dot.html
-	// http://www.visnos.com/demos/fractal
-	// "iamninja", []string{"imaninja.com"}, nil, []string{"GET", "OPTIONS"}, "http://imaninja.com"
 }

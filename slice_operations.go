@@ -7,7 +7,7 @@ func emptyValuesInSlice(params ...string) (bool, []string, error) {
 	params, err := forEach(func(uris string) bool {
 		notEmpty := len(uris) > 0
 		hasEmpty = !notEmpty
-		fmt.Printf("%s||%s->", hasEmpty, notEmpty)
+		fmt.Printf("%t||%t->", hasEmpty, notEmpty)
 		return notEmpty
 	}, params...)
 	return hasEmpty, params, err

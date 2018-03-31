@@ -17,9 +17,7 @@ func TestHostAPI(t *testing.T) {
 	})
 
 	t.Run("ShouldReturnFormattedHosts", func(t *testing.T) {
-		api := &KongAPI{}
-
-		api.SetHostsAPI("localhost", "127.0.0.1", "0.0.0.0")
+		api := &KongAPI{Hosts: []string{"localhost", "127.0.0.1", "0.0.0.0"}}
 
 		host, err := api.HostsAPI()
 		if host == "" {
