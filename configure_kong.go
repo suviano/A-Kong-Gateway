@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -15,22 +16,24 @@ const (
 )
 
 func requestMaker(param KongAPI) interface{} {
+	fmt.Println(fmt.Sprintf("starting %s", param.Name))
+
 	hosts, err := param.HostsAPI()
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, "host has a error"))
 	}
 
 	uris, err := param.UrisAPI()
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, "uris has a error"))
 	}
 
 	methods, err := param.MethodsAPI()
 	if err != nil {
-		panic(err)
+		panic(errors.Wrap(err, "methods has a error"))
 	}
 
-	b, _ := json.Marshal(struct {
+	newApiConfig := struct {
 		Name                   string `json:"name"`
 		Hosts                  string `json:"hosts"`
 		Uris                   string `json:"uris"`
@@ -50,18 +53,46 @@ func requestMaker(param KongAPI) interface{} {
 		Uris:        uris,
 		Methods:     methods,
 		UpstreamURL: param.UpstreamURL,
-	})
-
-	r, err := http.Post(fmt.Sprintf("%s/apis", ""), "application/json", bytes.NewBuffer(b))
-	if err != nil {
-		log.Fatalf("%+v\n", err)
 	}
 
-	defer r.Body.Close()
-	body, _ := ioutil.ReadAll(r.Body)
-	log.Printf("%v\n", body)
+	client := &http.Client{}
 
-	return body
+	ApiURL := fmt.Sprintf("%s/%s", url, param.Name)
+	requestDel, err := http.NewRequest("DELETE", ApiURL, nil)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("pre config request operator: %+v", err.Error()))
+	}
+
+	responseDelete, err := client.Do(requestDel)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("pre config request: %+v", err.Error()))
+	}
+	defer responseDelete.Body.Close()
+	bodyDelete, err := ioutil.ReadAll(responseDelete.Body)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("pre config response error: %+v", err.Error()))
+	}
+	fmt.Println(fmt.Sprintf("pre config response %s", bodyDelete))
+
+	payloadsApi := new(bytes.Buffer)
+	json.NewEncoder(payloadsApi).Encode(newApiConfig)
+
+	requestPost, err := http.NewRequest("POST", url, payloadsApi)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("config request operator %+v", err.Error()))
+	}
+	requestPost.Header.Add("Content-Type", "application/json")
+
+	responsePost, err := client.Do(requestPost)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("config request operation %+v", err.Error()))
+	}
+	defer responsePost.Body.Close()
+	bodyPost, _ := ioutil.ReadAll(responsePost.Body)
+	fmt.Println(fmt.Sprintf("config request operation response %s", bodyPost))
+
+	fmt.Println(fmt.Sprintf("configuration finished for %s\n", param.Name))
+	return bodyPost
 }
 
 // KongAPI Configuration structure
