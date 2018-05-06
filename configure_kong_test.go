@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func TestHostAPI(t *testing.T) {
-	t.Run("ShouldThrowErrorWhenAnyRoutingOptionProvided", func(t *testing.T) {
+	t.Run("ShouldThrowErrorWhenAnyRequiredRoutingOptionProvided", func(t *testing.T) {
 		api := &KongAPI{}
 
 		host, err := api.HostsAPI()
@@ -29,9 +29,43 @@ func TestHostAPI(t *testing.T) {
 		}
 	})
 
-	t.Run("ShouldReturnNotValues", func(t *testing.T) {
-		// api := &KongAPI{}
+	t.Run("ShouldReturnFormattedHostsIfNoRequiredOptionsIsEmpty", func(t *testing.T) {
+		api := &KongAPI{
+			Methods: []string{"GET"},
+			Uris: []string{"/test"},
+		}
 
-		//TODO: implement this test
+		_, err := api.HostsAPI()
+		if err != nil {
+			t.Errorf("expected error, should be nil %+v", err)
+		}
+	})
+
+	t.Run("ShouldReturnFormattedHostsIfOnlyMethodsIsDefined", func(t *testing.T) {
+		api := &KongAPI{
+			Methods: []string{"GET"},
+			Uris: []string{},
+		}
+
+		_, err := api.HostsAPI()
+		if err != nil {
+			t.Errorf("expected error, should be nil %+v", err)
+		}
+	})
+
+	t.Run("ShouldReturnFormattedHostsIfOnlyUrisIsDefined", func(t *testing.T) {
+		api := &KongAPI{
+			Methods: []string{},
+			Uris: []string{"/test"},
+		}
+
+		_, err := api.HostsAPI()
+		if err != nil {
+			t.Errorf("expected error, should be nil %+v", err)
+		}
 	})
 }
+
+func TestUrisAPI(t *testing.T) {}
+
+func TestMethodsAPI(t *testing.T) {}

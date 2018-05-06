@@ -137,19 +137,19 @@ func (kong *KongAPI) MethodsAPI() (string, error) {
 
 func kongRoutingOptionString(target, alt1, alt2 []string) (string, error) {
 	var msg error
-	urisEmpty, methodsEmpty := false, false
+	alt1Empty, alt2Empty := false, false
 	if len(target) == 0 {
-		urisEmpty = len(alt1) == 0
-		if !urisEmpty {
-			urisEmpty, _, _ = emptyValuesInSlice(alt1...)
+		alt1Empty = len(alt1) == 0
+		if !alt1Empty {
+			alt1Empty, _, _ = emptyValuesInSlice(alt1...)
 		}
 
-		methodsEmpty = len(alt2) == 0
-		if !methodsEmpty {
-			methodsEmpty, _, _ = emptyValuesInSlice(alt2...)
+		alt2Empty = len(alt2) == 0
+		if !alt2Empty {
+			alt2Empty, _, _ = emptyValuesInSlice(alt2...)
 		}
 
-		if methodsEmpty && urisEmpty {
+		if alt2Empty && alt1Empty {
 			msg = fmt.Errorf("hosts, uris and methods option are empty, aleast one of the should not be empty")
 		}
 	}
