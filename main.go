@@ -9,7 +9,7 @@ func main() {
 	})
 	// http://www.exploratorium.edu/files/exhibits/fading_dot/fading_dot.html
 	requestMaker(KongAPI{
-		Name:        "fading dot",
+		Name:        "fadingDot",
 		UpstreamURL: "http://www.exploratorium.edu/files/exhibits/fading_dot/fading_dot.html",
 		Methods:     []string{"GET", "OPTIONS"},
 	})
