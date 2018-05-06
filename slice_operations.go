@@ -7,7 +7,6 @@ func emptyValuesInSlice(params ...string) (bool, []string, error) {
 	params, err := forEach(func(uris string) bool {
 		notEmpty := len(uris) > 0
 		hasEmpty = !notEmpty
-		fmt.Printf("%t||%t->", hasEmpty, notEmpty)
 		return notEmpty
 	}, params...)
 	return hasEmpty, params, err
@@ -20,7 +19,7 @@ func forEach(verifier func(param string) bool, params ...string) ([]string, erro
 		if verifier(param) {
 			verifiedParams = append(verifiedParams, param)
 		} else {
-			err = fmt.Errorf(`parameter "%s" of %d position is invalid`, param, index)
+			err = fmt.Errorf(`parameter "%s" on %d position is invalid`, param, index)
 		}
 	}
 	return verifiedParams, err
