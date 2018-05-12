@@ -133,7 +133,7 @@ func (kong *KongAPI) UrisAPI() (string, error) {
 
 // MethodsAPI kong methods api getter
 func (kong *KongAPI) MethodsAPI() (string, error) {
-	return kongRoutingOptionString(kong.Uris, kong.Methods, kong.Hosts)
+	return kongRoutingOptionString(kong.Methods, kong.Hosts, kong.Uris)
 }
 
 func kongRoutingOptionString(target, alt1, alt2 []string) (string, error) {
