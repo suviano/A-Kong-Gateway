@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
 	"github.com/pkg/errors"
 )
 
@@ -33,7 +34,7 @@ func requestMaker(param KongAPI) interface{} {
 		panic(errors.Wrap(err, "methods has a error"))
 	}
 
-	newApiConfig := struct {
+	newAPIConfig := struct {
 		Name                   string `json:"name"`
 		Hosts                  string `json:"hosts"`
 		Uris                   string `json:"uris"`
@@ -57,8 +58,8 @@ func requestMaker(param KongAPI) interface{} {
 
 	client := &http.Client{}
 
-	ApiURL := fmt.Sprintf("%s/%s", url, param.Name)
-	requestDel, err := http.NewRequest("DELETE", ApiURL, nil)
+	APIURL := fmt.Sprintf("%s/%s", url, param.Name)
+	requestDel, err := http.NewRequest("DELETE", APIURL, nil)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("pre config request operator: %+v", err.Error()))
 	}
@@ -74,10 +75,10 @@ func requestMaker(param KongAPI) interface{} {
 	}
 	fmt.Println(fmt.Sprintf("pre config response %s", bodyDelete))
 
-	payloadsApi := new(bytes.Buffer)
-	json.NewEncoder(payloadsApi).Encode(newApiConfig)
+	payloadsAPI := new(bytes.Buffer)
+	json.NewEncoder(payloadsAPI).Encode(newAPIConfig)
 
-	requestPost, err := http.NewRequest("POST", url, payloadsApi)
+	requestPost, err := http.NewRequest("POST", url, payloadsAPI)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("config request operator %+v", err.Error()))
 	}
