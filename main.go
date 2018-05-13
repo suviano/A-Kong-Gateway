@@ -26,4 +26,7 @@ func main() {
 		Hosts:       []string{"imaninja.com"},
 		Methods:     []string{"GET", "OPTIONS"},
 	})
+
+	// TODO implement plugins configuration
+	// TODO implement upstream configuration
 }

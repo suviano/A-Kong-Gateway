@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	url = "http://0.0.0.0:8001/apis/"
+	url = "http://0.0.0.0:8001/apis"
 )
 
 func requestMaker(param KongAPI) interface{} {
@@ -73,7 +73,10 @@ func requestMaker(param KongAPI) interface{} {
 	if err != nil {
 		log.Fatal(fmt.Sprintf("pre config response error: %+v", err.Error()))
 	}
-	fmt.Println(fmt.Sprintf("pre config response %s", bodyDelete))
+
+	if len(bodyDelete) != 0 {
+		fmt.Println(fmt.Sprintf("pre config response %s", bodyDelete))
+	}
 
 	payloadsAPI := new(bytes.Buffer)
 	json.NewEncoder(payloadsAPI).Encode(newAPIConfig)
