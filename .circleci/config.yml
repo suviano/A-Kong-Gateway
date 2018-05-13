@@ -11,6 +11,11 @@ jobs:
       - run: go get -v -t -d ./...
       - run: go test -v ./...
 
+      - run: sh -c "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags=\"-s\" -o /tmp/autoconfig"
+    
+    - store_artifacts:
+      path: /tmp/autoconfig
+
   build:
     docker:
       - image: docker:18.03.1-ce-git
@@ -20,7 +25,6 @@ jobs:
     steps:
       - checkout
 
-      - run: sh -c "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags=\"-s\" -o autoconfig"
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: docker build -t trocase/kongautoconfig:$CIRCLE_BRANCH .
       - run: docker push trocase/kongautoconfig:$CIRCLE_BRANCH
