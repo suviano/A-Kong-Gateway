@@ -14,13 +14,13 @@ jobs:
   build:
     docker:
       - image: docker:18.03.1-ce-git
+    
+    working_directory: /go/src/github.com/suviano/A-Kong-Gateway
+
     steps:
       - checkout
 
-    - run: sh -c "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags=\"-s\" -o autoconfig"
-
-    - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-
-    - run: docker build -t trocase/kongautoconfig:$CIRCLE_BRANCH .
-
-    - run: docker push trocase/kongautoconfig:$CIRCLE_BRANCH
+      - run: sh -c "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags=\"-s\" -o autoconfig"
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: docker build -t trocase/kongautoconfig:$CIRCLE_BRANCH .
+      - run: docker push trocase/kongautoconfig:$CIRCLE_BRANCH
