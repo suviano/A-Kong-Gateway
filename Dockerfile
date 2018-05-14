@@ -2,6 +2,6 @@ FROM iron/go
 
 WORKDIR /app
 
-COPY autoconfig /app/
+COPY /tmp/autoconfig /app/
 
 ENTRYPOINT ["./autoconfig"]

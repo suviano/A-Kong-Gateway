@@ -18,7 +18,7 @@ jobs:
 
   build:
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: docker:18.03.1-ce-git
     
     working_directory: /go/src/github.com/suviano/A-Kong-Gateway
 
@@ -26,6 +26,6 @@ jobs:
       - checkout
       - setup_remote_docker
 
-      - run: docker login --username $DOCKER_USER --password-stdin $DOCKER_PASS
+      - run: docker login --username $DOCKER_USER --password $DOCKER_PASS
       - run: docker build -t trocase/kongautoconfig:$CIRCLE_BRANCH .
       - run: docker push trocase/kongautoconfig:$CIRCLE_BRANCH
