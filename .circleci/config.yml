@@ -21,7 +21,6 @@ jobs:
     working_directory: /tmp
     steps:
       - checkout
-      - setup_remote_docker
 
       - run:
           command: |
