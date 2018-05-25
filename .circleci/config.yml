@@ -19,6 +19,7 @@ jobs:
     machine:
         enabled: true
     steps:
+      - checkout
       - run:
           command: |
             docker login --username $DOCKER_USER --password $DOCKER_PASS
