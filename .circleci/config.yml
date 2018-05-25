@@ -1,4 +1,5 @@
 version: 2.0
+
 jobs:
   build:
     docker:
@@ -6,19 +7,18 @@ jobs:
     working_directory: /go/src/github.com/suviano/A-Kong-Gateway
     steps:
       - checkout
-      - run: go get -v -t -d ./...
-      - run: go test -v ./...
-      - run: sh -c "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags=\"-s\" -o /tmp/autoconfig"
+      - run:
+          command: |
+            go get -v -t -d ./...
+            go test -v ./...
+            sh -c "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a --installsuffix cgo --ldflags=\"-s\" -o /tmp/autoconfig"
       - store_artifacts:
-        path: /tmp
+          path: /tmp
+  
   deploy:
-    docker:
-      - image: circleci/golang:1.10
     machine:
         enabled: true
     working_directory: /tmp
-    environment:
-      HEROKU_APP: "sleepy-refuge-55486"
     steps:
       - checkout
       - setup_remote_docker
@@ -28,9 +28,12 @@ jobs:
             docker login --username $DOCKER_USER --password $DOCKER_PASS
             docker build -t trocase/kongautoconfig:$CIRCLE_BRANCH .
             docker push trocase/kongautoconfig:$CIRCLE_BRANCH
+
 workflows:
   version: 2
-  build_and_deploy:
+  build-and-deploy:
     jobs:
       - build
-      - deploy
+      - deploy:
+          requires:
+            - build
