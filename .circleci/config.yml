@@ -1,7 +1,7 @@
 version: 2.0
 
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/golang:1.10
     working_directory: /go/src/github.com/suviano/A-Kong-Gateway
@@ -13,22 +13,23 @@ jobs:
             go test -v ./...
   
   deploy:
-    machine:
-        enabled: true
-    working_directory: /go/src/github.com/suviano/A-Kong-Gateway
+    docker:
+      - image: docker:17.05.0-ce-git
+    working_directory: /app
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           command: |
-            docker login --username $DOCKER_USER --password $DOCKER_PASS
             docker build -t trocase/kongautoconfig:$CIRCLE_BRANCH .
+            docker login --username $DOCKER_USER --password $DOCKER_PASS
             docker push trocase/kongautoconfig:$CIRCLE_BRANCH
 
 workflows:
   version: 2
-  build-and-deploy:
+  test-and-deploy:
     jobs:
-      - build
+      - test
       - deploy:
           requires:
             - build
