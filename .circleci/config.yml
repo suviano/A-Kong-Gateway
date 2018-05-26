@@ -15,6 +15,7 @@ jobs:
   deploy:
     machine:
         enabled: true
+    working_directory: /go/src/github.com/suviano/A-Kong-Gateway
     steps:
       - checkout
       - run:
